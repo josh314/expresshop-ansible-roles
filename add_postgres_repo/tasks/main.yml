@@ -1,0 +1,20 @@
+####################################################################
+# PostgreSQL repo
+# ===============
+#
+# Add this repo to obtain up-to-date PostgreSQL distribution
+####################################################################
+
+- name: Import the public key used by the package management system
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Add PostgreSQL repository
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main
+    state: present
+
+- name: update apt package list
+  apt:
+    update-cache: yes
