@@ -1,0 +1,121 @@
+
+- import_role:
+    name: add_postgres_repo
+  become: yes
+
+#TODO: ensure working directories for DB
+
+- name: install apt packages (including postgres)
+  apt:
+    pkg:
+      - postgresql-12
+      - postgresql-client-12
+      - python3-psycopg2
+  become: yes
+
+- name: database actions
+  block:
+
+    # TODO secure postgres user with password
+    # TODO: revoke all PUBLIC access privileges, if any
+
+    - name: Create an admin user for the `{{ postgresql_application_database_name }}` database
+      postgresql_user:
+        name: "{{ postgresql_application_database_admin }}"
+        password: "{{ postgresql_application_database_admin_password }}"
+        expires: infinity
+        role_attr_flags: LOGIN
+
+    - name: Create the `{{ postgresql_application_database_name }}` database
+      postgresql_db:
+        name: "{{ postgresql_application_database_name }}"
+        owner: "{{ postgresql_application_database_admin }}"
+
+    # - name: Revoke the default database privileges for the PUBLIC group
+    #   postgresql_privs:
+    #     db: "{{ postgresql_application_database_name }}"
+    #     type: database
+    #     roles: public
+    #     privs: ALL
+    #     state: absent
+    #   register: revoke_public_db_priv
+
+    # - debug: var=revoke_public_db_priv
+
+    # - name: Revoke the default table privileges for the PUBLIC group
+    #   postgresql_privs:
+    #     db: "{{ postgresql_application_database_name }}"
+    #     roles: public
+    #     type: table
+    #     schema: public
+    #     objs: ALL_IN_SCHEMA
+    #     privs: ALL
+    #     state: absent
+    #   register: revoke_public_schema_priv
+
+    # - name: Revoke the default table privileges for the PUBLIC group
+    #   postgresql_query:
+    #     db: "{{ postgresql_application_database_name }}"
+    #     query: REVOKE ALL ON SCHEMA public FROM PUBLIC
+    #   register: revoke_public_schema_priv
+
+    # - debug: var=revoke_public_schema_priv
+
+    # TODO: create tables
+    # TODO: ID type, generate UUIDs (are necessary for sharded db)?
+    - name: Create table for received inventory items
+      postgresql_table:
+        db: "{{ postgresql_application_database_name }}"
+        owner: "{{ postgresql_application_database_admin }}"
+        name: received_items
+        columns:
+          - received_item_id serial primary key 
+          - barcode varchar(16)
+  
+    - name: Create an application database user for `{{ postgresql_application_database_name }}`
+      postgresql_user:
+        name: "{{ postgresql_application_database_user }}"
+        password: "{{ postgresql_application_database_user_password }}"
+        expires: infinity
+        db: "{{ postgresql_application_database_name }}"
+        role_attr_flags: LOGIN
+
+    # TODO?: use default_privs instead so this user as access to tables created later 
+    - name: Grant privileges to the application database user
+      postgresql_privs:
+        db: "{{ postgresql_application_database_name }}"
+        roles: "{{ postgresql_application_database_user }}"
+        type: table
+        schema: public
+        objs: ALL_IN_SCHEMA
+        privs: SELECT,INSERT,UPDATE
+        grant_option: no
+        state: present
+
+    - name: Set PostgreSQL host-based authentication entries
+      postgresql_pg_hba:
+        contype: host
+        databases: "{{ postgresql_application_database_name }}"
+        dest: "{{ postgresql_conf_dir }}/pg_hba.conf"
+        users: "{{ postgresql_application_database_user }},{{ postgresql_application_database_admin }}"
+        address: 0.0.0.0/0
+        method: md5
+        mode: 0600
+        owner: postgres
+        group: postgres
+
+    - name: Set listening addresses on PostgreSQL server
+      postgresql_set:
+        name: listen_addresses
+        value: '*'
+      register: set
+
+    - debug: var=set
+
+  become_user: postgres
+
+- name: Restart PostgreSQL so new config settings take effect
+  service:
+    name: postgresql
+    state: restarted
+  become: yes
