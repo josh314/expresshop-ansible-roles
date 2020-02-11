@@ -1,0 +1,26 @@
+- name: ensure working directory exists
+  file:
+    path: "{{ backfill_ehdb_postgresql_working_dir }}"
+    state: directory
+
+- name: copy CSV files to database server
+  copy:
+    src: "{{backfill_ehdb_postgresql_files_path}}/{{ item.file }}"
+    dest: "{{ backfill_ehdb_postgresql_working_dir }}/{{ item.file }}"
+  with_items: "{{ backfill_ehdb_postgresql_table_files }}"
+
+- name: backfill tables with CSV data
+  postgresql_copy:
+    db: "{{ backfill_ehdb_postgresql_db_name }}"
+    options:
+      format: csv
+      header: true
+    copy_from: "{{ backfill_ehdb_postgresql_working_dir }}/{{ item.file }}"
+    dst: "{{ item.table }}"
+  become_user: postgres
+  with_items: "{{ backfill_ehdb_postgresql_table_files }}"
+
+- name: cleanup
+  file:
+    path: "{{ backfill_ehdb_postgresql_working_dir }}"
+    state: absent

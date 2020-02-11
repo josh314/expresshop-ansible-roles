@@ -1,0 +1,14 @@
+backfill_ehdb_postgresql_working_dir: /tmp/ehdb_backfill
+backfill_ehdb_postgresql_db_name: ehdb
+
+backfill_ehdb_postgresql_files_path: "."
+
+backfill_ehdb_postgresql_table_files:
+  - table: inventory_groups
+    file: inventory-groups.csv
+  - table: received_inventory
+    file: received-inventory.csv
+  - table: inventory_group_entities
+    file: inventory-group-entities.csv
+  - table: entity_types
+    file: entity-types.csv
