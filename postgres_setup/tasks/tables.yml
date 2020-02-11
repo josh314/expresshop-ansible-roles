@@ -1,0 +1,9 @@
+
+
+- name: Create tables
+  postgresql_table:
+    db: "{{ postgresql_application_database_name }}"
+    owner: "{{ postgresql_application_database_admin }}"
+    name: "{{ item.name }}"
+    columns: "{{ item.columns }}"
+  with_items: "{{ postgres_setup_tables }}"

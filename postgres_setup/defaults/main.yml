@@ -1,0 +1,41 @@
+postgres_setup_tables:
+
+  - name: vendors
+    columns:
+      - date_added timestamp DEFAULT CURRENT_TIMESTAMP
+      - date_modified timestamp DEFAULT CURRENT_TIMESTAMP
+      - id serial PRIMARY KEY
+      - vendor_name varchar(64)
+
+  - name: incoming_inventory
+    columns:
+      - date_added timestamp DEFAULT CURRENT_TIMESTAMP
+      - date_modified timestamp DEFAULT CURRENT_TIMESTAMP
+      - id serial PRIMARY KEY
+      - barcode varchar(16)
+      - vendor_id integer REFERENCES vendors (id)
+      - vendor_block_id varchar(128)
+      - block_id varchar(128)
+
+  - name: inventory_groups
+    columns:
+      - date_added timestamp DEFAULT CURRENT_TIMESTAMP
+      - date_modified timestamp DEFAULT CURRENT_TIMESTAMP
+      - id serial PRIMARY KEY
+      - handle varchar(32)
+      - description text
+
+  - name: received_inventory
+    columns:
+      - date_added timestamp DEFAULT CURRENT_TIMESTAMP
+      - date_modified timestamp DEFAULT CURRENT_TIMESTAMP
+      - id serial PRIMARY KEY
+      - barcode varchar(16)
+
+  - name: inventory_group_entities
+    columns:
+      - date_added timestamp DEFAULT CURRENT_TIMESTAMP
+      - date_modified timestamp DEFAULT CURRENT_TIMESTAMP
+      - id serial PRIMARY KEY
+      - received_inventory_id integer REFERENCES received_inventory (id)
+      - inventory_group_id integer REFERENCES inventory_groups (id)

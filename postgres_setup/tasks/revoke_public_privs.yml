@@ -1,0 +1,30 @@
+
+- name: Revoke the default database privileges for the PUBLIC group
+  postgresql_privs:
+    db: "{{ postgresql_application_database_name }}"
+    type: database
+    roles: public
+    privs: ALL
+    state: absent
+  register: revoke_public_db_priv
+
+- debug: var=revoke_public_db_priv
+
+- name: Revoke the default table privileges for the PUBLIC group
+  postgresql_privs:
+    db: "{{ postgresql_application_database_name }}"
+    roles: public
+    type: table
+    schema: public
+    objs: ALL_IN_SCHEMA
+    privs: ALL
+    state: absent
+  register: revoke_public_schema_priv
+
+- name: Revoke the default table privileges for the PUBLIC group
+  postgresql_query:
+    db: "{{ postgresql_application_database_name }}"
+    query: REVOKE ALL ON SCHEMA public FROM PUBLIC
+  register: revoke_public_schema_priv
+
+- debug: var=revoke_public_schema_priv

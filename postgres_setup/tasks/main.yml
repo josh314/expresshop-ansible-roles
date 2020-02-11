@@ -31,46 +31,8 @@
         name: "{{ postgresql_application_database_name }}"
         owner: "{{ postgresql_application_database_admin }}"
 
-    # - name: Revoke the default database privileges for the PUBLIC group
-    #   postgresql_privs:
-    #     db: "{{ postgresql_application_database_name }}"
-    #     type: database
-    #     roles: public
-    #     privs: ALL
-    #     state: absent
-    #   register: revoke_public_db_priv
-
-    # - debug: var=revoke_public_db_priv
-
-    # - name: Revoke the default table privileges for the PUBLIC group
-    #   postgresql_privs:
-    #     db: "{{ postgresql_application_database_name }}"
-    #     roles: public
-    #     type: table
-    #     schema: public
-    #     objs: ALL_IN_SCHEMA
-    #     privs: ALL
-    #     state: absent
-    #   register: revoke_public_schema_priv
-
-    # - name: Revoke the default table privileges for the PUBLIC group
-    #   postgresql_query:
-    #     db: "{{ postgresql_application_database_name }}"
-    #     query: REVOKE ALL ON SCHEMA public FROM PUBLIC
-    #   register: revoke_public_schema_priv
-
-    # - debug: var=revoke_public_schema_priv
-
-    # TODO: create tables
-    # TODO: ID type, generate UUIDs (are necessary for sharded db)?
-    - name: Create table for received inventory items
-      postgresql_table:
-        db: "{{ postgresql_application_database_name }}"
-        owner: "{{ postgresql_application_database_admin }}"
-        name: received_items
-        columns:
-          - received_item_id serial primary key 
-          - barcode varchar(16)
+    - name: Create tables in `{{ postgresql_application_database_name }}`
+      import_tasks: tables.yml
   
     - name: Create an application database user for `{{ postgresql_application_database_name }}`
       postgresql_user:
@@ -108,13 +70,10 @@
       postgresql_set:
         name: listen_addresses
         value: '*'
-      register: set
-
-    - debug: var=set
 
   become_user: postgres
 
-- name: Restart PostgreSQL so new config settings take effect
+- name: Restart PostgreSQL
   service:
     name: postgresql
     state: restarted
