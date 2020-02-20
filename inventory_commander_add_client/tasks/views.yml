@@ -1,0 +1,9 @@
+- name: Create client table views for {{ inventory_commander_add_client__client_name }}
+  postgresql_query:
+    db: "{{ inventory_commander_add_client__database_name }}"
+    query: >
+      CREATE OR REPLACE VIEW {{ inventory_commander_add_client__schema }}.{{ view.name }} AS
+      {{ view.query }}
+  with_items: "{{ inventory_commander_add_client__views }}"
+  loop_control:
+    loop_var: view

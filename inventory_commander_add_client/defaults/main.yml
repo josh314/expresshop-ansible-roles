@@ -1,0 +1,5 @@
+
+inventory_commander_add_client__version: 12
+inventory_commander_add_client__conf_dir: /etc/postgresql/{{ inventory_commander_add_client__version }}/main
+
+inventory_commander_add_client__schema: "{{ inventory_commander_add_client__client_admin_user }}"

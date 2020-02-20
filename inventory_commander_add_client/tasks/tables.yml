@@ -1,0 +1,9 @@
+- name: Create client tables for {{ inventory_commander_add_client__client_name }}
+  postgresql_table:
+    db: "{{ inventory_commander_add_client__database_name }}"
+    owner: "{{ inventory_commander_add_client__db_admin_user }}"
+    table: "{{ inventory_commander_add_client__schema }}.{{ table.name }}"
+    columns: "{{ table.columns }}"
+  with_items: "{{ inventory_commander_add_client__tables }}"
+  loop_control:
+    loop_var: table

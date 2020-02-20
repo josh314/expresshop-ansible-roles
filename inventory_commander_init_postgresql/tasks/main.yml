@@ -1,0 +1,76 @@
+
+- name: Add the PostgreSQL repo to get access to the latest version
+  import_role:
+    name: add_postgres_repo
+  become: yes
+
+#TODO: ensure working directories for DB
+
+- name: install apt packages (including postgres)
+  apt:
+    pkg:
+      - postgresql-12
+      - postgresql-client-12
+      - python3-psycopg2
+  become: yes
+
+- name: database actions
+  block:
+
+    # TODO secure postgres user with password
+    # TODO: revoke all PUBLIC access privileges, if any
+
+    - name: Create an admin user for the `{{ inventory_commander_init_postgresql__database_name }}` database
+      postgresql_user:
+        name: "{{ inventory_commander_init_postgresql__database_admin }}"
+        password: "{{ inventory_commander_init_postgresql__database_admin_password }}"
+        expires: infinity
+        role_attr_flags: LOGIN
+
+    - name: Create the `{{ inventory_commander_init_postgresql__database_name }}` database
+      postgresql_db:
+        name: "{{ inventory_commander_init_postgresql__database_name }}"
+        owner: "{{ inventory_commander_init_postgresql__database_admin }}"
+
+    - name: Set the admin user's default privileges on `{{ inventory_commander_init_postgresql__database_name }}`
+      postgresql_privs:
+        db: "{{ inventory_commander_init_postgresql__database_name }}"
+        role: "{{ inventory_commander_init_postgresql__database_admin }}"
+        objs: TABLES,SEQUENCES,FUNCTIONS,TYPES
+        type: default_privs
+        privs: ALL
+        grant_option: yes
+        
+    - name: Create public schema tables in `{{ inventory_commander_init_postgresql__database_name }}`
+      postgresql_table:
+        db: "{{ inventory_commander_init_postgresql__database_name }}"
+        owner: "{{ inventory_commander_init_postgresql__database_admin }}"
+        table: "{{ item.name }}"
+        columns: "{{ item.columns }}"
+      with_items: "{{ inventory_commander_init_postgresql__tables }}"
+  
+    - name: Set PostgreSQL host-based authentication entries
+      postgresql_pg_hba:
+        contype: host
+        databases: "{{ inventory_commander_init_postgresql__database_name }}"
+        dest: "{{ inventory_commander_init_postgresql__conf_dir }}/pg_hba.conf"
+        users: "{{ inventory_commander_init_postgresql__database_admin }}"
+        address: 0.0.0.0/0
+        method: md5
+        mode: 0600
+        owner: postgres
+        group: postgres
+
+
+    - name: Set listening addresses on PostgreSQL server
+      postgresql_set:
+        name: listen_addresses
+        value: '*'
+
+  become_user: postgres
+
+- name: Restart PostgreSQL
+  service:
+    name: postgresql
+    state: restarted
+  become: yes
