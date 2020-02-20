@@ -1,0 +1,8 @@
+- name: Create btree indexes
+  postgresql_table:
+    idxname: "{{ item.name }}"
+    db: "{{ postgresql_application_database_name }}"
+    schema: "{{ item.schema }}"
+    table: "{{ item.table }}"
+    columns: "{{ item.columns }}"
+  with_items: "{{ postgres_setup_indexes }}"
