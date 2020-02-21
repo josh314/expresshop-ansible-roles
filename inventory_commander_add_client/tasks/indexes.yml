@@ -1,10 +1,10 @@
 - name: Create btree indexes
-  postgresql_table:
+  postgresql_idx:
     idxname: "{{ index.name }}"
     db: "{{ inventory_commander_add_client__database_name }}"
     schema: "{{ index.schema | default(inventory_commander_add_client__schema) }}"
     table: "{{ index.table }}"
     columns: "{{ index.columns }}"
-  loop: "{{ inventory_commander_add_client__indexes | flatten(level=1) }}"
+  with_items: "{{ inventory_commander_add_client__indexes }}"
   loop_control:
     loop_var: index

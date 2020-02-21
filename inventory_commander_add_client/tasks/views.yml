@@ -7,3 +7,12 @@
   with_items: "{{ inventory_commander_add_client__views }}"
   loop_control:
     loop_var: view
+
+- name: Grant privileges for {{ inventory_commander_add_client__client_name }} views
+  postgresql_query:
+    db: "{{ inventory_commander_add_client__database_name }}"
+    query: >
+      GRANT SELECT ON {{ inventory_commander_add_client__schema }}.{{ view.name }} TO {{ inventory_commander_add_client__client_admin_group }}
+  with_items: "{{ inventory_commander_add_client__views }}"
+  loop_control:
+    loop_var: view

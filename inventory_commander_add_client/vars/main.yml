@@ -87,6 +87,14 @@ inventory_commander_add_client__views:
 ###############################################################
 
 inventory_commander_add_client__indexes:
-  - name: inventory_group_contents_idx
+  - name: inventory_groups__handle__idx
+    table: inventory_grous
+    columns: handle
+
+  - name: inventory_group_inventory_item_mappings__inventory_group_id__idx
     table: inventory_group_inventory_item_mappings
     columns: inventory_group_id
+
+  - name: inventory_group_inventory_item_mappings__inventory_item_id__idx
+    table: inventory_group_inventory_item_mappings
+    columns: inventory_item_id

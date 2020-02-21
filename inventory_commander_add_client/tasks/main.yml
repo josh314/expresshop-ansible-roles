@@ -7,16 +7,31 @@
         db: "{{ inventory_commander_add_client__database_name }}"
         query: >
           INSERT INTO clients (name, admin_user)
-          VALUES ('{{ inventory_commander_add_client__client_name }}', '{{ inventory_commander_add_client__client_admin_user }}')
+          VALUES ('{{ inventory_commander_add_client__client_name }}', '{{ inventory_commander_add_client__client_admin_group }}')
           ON CONFLICT DO NOTHING
+
+    - name: Create a client admin group for {{ inventory_commander_add_client__client_name }}
+      postgresql_user:
+        name: "{{ inventory_commander_add_client__client_admin_group }}"
+        db: "{{ inventory_commander_add_client__database_name }}"
+        role_attr_flags: NOLOGIN
 
     - name: Create a client admin user for {{ inventory_commander_add_client__client_name }}
       postgresql_user:
-        name: "{{ inventory_commander_add_client__client_admin_user }}"
+        name: "{{ inventory_commander_add_client__fully_qualified_client_admin_user }}"
         password: "{{ inventory_commander_add_client__client_admin_user_password }}"
         expires: infinity
         db: "{{ inventory_commander_add_client__database_name }}"
+        groups: "{{ inventory_commander_add_client__client_admin_group }}"
         role_attr_flags: LOGIN
+
+    - name: Assign the db admin user to the client admin group
+      postgresql_privs:
+        db: "{{ inventory_commander_add_client__database_name }}"
+        type: group
+        objs: "{{ inventory_commander_add_client__client_admin_group }}"
+        roles: "{{ inventory_commander_add_client__db_admin_user }}"
+        admin_option: yes
 
     - name: Create client schema for {{ inventory_commander_add_client__client_name }}
       postgresql_schema:
@@ -24,10 +39,10 @@
         name: "{{ inventory_commander_add_client__schema }}"
         owner: "{{ inventory_commander_add_client__db_admin_user }}"
 
-    - name: Grant privileges to the client database user
+    - name: Grant privileges to the client admin group for {{ inventory_commander_add_client__client_name }}
       postgresql_privs:
         db: "{{ inventory_commander_add_client__database_name }}"
-        roles: "{{ inventory_commander_add_client__client_admin_user }}"
+        roles: "{{ inventory_commander_add_client__client_admin_group }}"
         type: default_privs
         schema: "{{ inventory_commander_add_client__schema }}"
         objs: tables
@@ -40,15 +55,15 @@
     - name: Create client table views
       import_tasks: views.yml
 
-    # - name: Create client table indexes
-    #   import_tasks: indexes.yml
+    - name: Create client table indexes
+      import_tasks: indexes.yml
 
     - name: Set PostgreSQL host-based authentication entries
       postgresql_pg_hba:
         contype: host
         databases: "{{ inventory_commander_add_client__database_name }}"
         dest: "{{ inventory_commander_add_client__conf_dir }}/pg_hba.conf"
-        users: "{{ inventory_commander_add_client__client_admin_user }}"
+        users: "{{ inventory_commander_add_client__client_admin_group }}"
         address: 0.0.0.0/0
         method: md5
         mode: 0600
