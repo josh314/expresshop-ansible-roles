@@ -1,8 +1,8 @@
-- name: Create btree indexes
+- name: Create indexes
   postgresql_idx:
     idxname: "{{ index.name }}"
     db: "{{ inventory_commander_add_client__database_name }}"
-    schema: "{{ index.schema | default(inventory_commander_add_client__schema) }}"
+    schema: "{{ inventory_commander_add_client__schema }}"
     table: "{{ index.table }}"
     columns: "{{ index.columns }}"
   with_items: "{{ inventory_commander_add_client__indexes }}"

@@ -12,6 +12,7 @@
       - postgresql-12
       - postgresql-client-12
       - python3-psycopg2
+      - postgresql-plpython3-12
   become: yes
 
 - name: database actions
@@ -40,14 +41,30 @@
         type: default_privs
         privs: ALL
         grant_option: yes
-        
+
+    - name: Add Python procedural language extension
+      postgresql_ext:
+        db: "{{ inventory_commander_init_postgresql__database_name }}"
+        name: plpython3u
+        state: present
+
+    - name: Create enumerated types
+      postgresql_query:
+        db: "{{ inventory_commander_init_postgresql__database_name }}"
+        query: "CREATE TYPE {{ enum.name }} AS ENUM ({{ enum['values'] | map('regex_replace', '(.+)', \"'\\1'\") | join(', ') }})"
+      with_items: "{{ inventory_commander_init_postgresql__enums }}"
+      loop_control:
+        loop_var: enum
+
     - name: Create public schema tables in `{{ inventory_commander_init_postgresql__database_name }}`
       postgresql_table:
         db: "{{ inventory_commander_init_postgresql__database_name }}"
         owner: "{{ inventory_commander_init_postgresql__database_admin }}"
-        table: "{{ item.name }}"
-        columns: "{{ item.columns }}"
+        table: "{{ table.name }}"
+        columns: "{{ table.columns }}"
       with_items: "{{ inventory_commander_init_postgresql__tables }}"
+      loop_control:
+        loop_var: table
   
     - name: Set PostgreSQL host-based authentication entries
       postgresql_pg_hba:
