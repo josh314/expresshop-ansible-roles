@@ -1,3 +1,4 @@
 
 inventory_commander_init_postgresql__version: 12
 inventory_commander_init_postgresql__conf_dir: /etc/postgresql/{{ inventory_commander_init_postgresql__version }}/main
+inventory_commander_init_postgresql__password_salt: mybigolesalt

@@ -12,7 +12,12 @@
       - postgresql-12
       - postgresql-client-12
       - python3-psycopg2
-      - postgresql-plpython3-12
+  become: yes
+
+- name: create system user for the database admin
+  user:
+    name: "{{ inventory_commander_init_postgresql__database_admin }}"
+    password: "{{ inventory_commander_init_postgresql__database_admin_password | password_hash('sha512', inventory_commander_init_postgresql__password_salt ) }}"
   become: yes
 
 - name: database actions
@@ -42,12 +47,6 @@
         privs: ALL
         grant_option: yes
 
-    - name: Add Python procedural language extension
-      postgresql_ext:
-        db: "{{ inventory_commander_init_postgresql__database_name }}"
-        name: plpython3u
-        state: present
-
     - name: Create enumerated types
       postgresql_query:
         db: "{{ inventory_commander_init_postgresql__database_name }}"
@@ -55,6 +54,7 @@
       with_items: "{{ inventory_commander_init_postgresql__enums }}"
       loop_control:
         loop_var: enum
+      ignore_errors: yes
 
     - name: Create public schema tables in `{{ inventory_commander_init_postgresql__database_name }}`
       postgresql_table:
@@ -65,19 +65,28 @@
       with_items: "{{ inventory_commander_init_postgresql__tables }}"
       loop_control:
         loop_var: table
-  
+
     - name: Set PostgreSQL host-based authentication entries
       postgresql_pg_hba:
-        contype: host
+        contype: "{{ user.contype }}"
         databases: "{{ inventory_commander_init_postgresql__database_name }}"
         dest: "{{ inventory_commander_init_postgresql__conf_dir }}/pg_hba.conf"
-        users: "{{ inventory_commander_init_postgresql__database_admin }}"
-        address: 0.0.0.0/0
-        method: md5
+        users: "{{ user.name }}"
+        address: "{{ user.address | default(omit) }}"
+        method: "{{ user.method }}"
         mode: 0600
         owner: postgres
         group: postgres
-
+      loop:
+        - name: "{{ inventory_commander_init_postgresql__database_admin }}"
+          contype: host
+          address: 0.0.0.0/0
+          method: md5
+        - name: "{{ inventory_commander_init_postgresql__database_admin }}"
+          contype: local
+          method: peer
+      loop_control:
+        loop_var: user
 
     - name: Set listening addresses on PostgreSQL server
       postgresql_set:
