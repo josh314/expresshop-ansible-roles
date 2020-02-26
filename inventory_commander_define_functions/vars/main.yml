@@ -1,0 +1,7 @@
+inventory_commander_define_functions__functions:
+  - name: compute_check_digit
+    args: varchar(16)
+    returns: char
+    language: PLPERL
+    volatility: IMMUTABLE
+    body: "{{ lookup('file', '../files/compute_check_digit.pl') }}"

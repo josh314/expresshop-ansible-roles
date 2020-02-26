@@ -1,0 +1,48 @@
+- name: install apt packages for Postgres prodedural languages (PL)
+  apt:
+    pkg:
+      - postgresql-plperl-12
+  become: yes
+
+- name: database actions
+  block:
+
+    - name: Install extensions for Postgres prodedural languages
+      postgresql_ext:
+        db: "{{ inventory_commander_define_functions__database_name }}"
+        name: "{{ lang_ext }}"
+        state: present
+      loop:
+        - plperl
+      loop_control:
+        loop_var: lang_ext
+
+    - name: Grant usage on installed prodedural languages
+      postgresql_privs:
+        db: "{{ inventory_commander_define_functions__database_name }}"
+        type: language
+        privs: usage
+        roles: public
+        objs: "{{ lang }}"
+      loop:
+        - plperl
+      loop_control:
+        loop_var: lang
+
+    - name: Create function
+      postgresql_query:
+        db: "{{ inventory_commander_define_functions__database_name }}"
+        query: >
+          CREATE OR REPLACE FUNCTION {{ function.name }}({{ function.args }})
+          RETURNS {{ function.returns }} AS
+          $$
+          {{ function.body }}
+          $$
+          LANGUAGE {{ function.language }} {{ function.volatility }}
+      loop: "{{ inventory_commander_define_functions__functions }}"
+      loop_control:
+        loop_var: function
+
+  become_user: postgres
+
+
