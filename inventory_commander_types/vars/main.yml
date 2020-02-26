@@ -1,0 +1,11 @@
+inventory_commander_types__enums:
+
+  - name: inventory_condition_enum
+    values:
+      - new
+      - case-packed
+      - shelf-pull
+      - customer return
+      - salvage
+      - damaged
+      - as is

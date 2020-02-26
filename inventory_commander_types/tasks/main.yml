@@ -1,0 +1,10 @@
+- name: Create enumerated types
+  postgresql_query:
+    db: "{{ inventory_commander_types__database_name }}"
+    login_user: "{{ inventory_commander_types__types_owner }}"
+    query: "CREATE TYPE {{ enum.name }} AS ENUM ({{ enum['values'] | map('regex_replace', '(.+)', \"'\\1'\") | join(', ') }})"
+  with_items: "{{ inventory_commander_types__enums }}"
+  loop_control:
+    loop_var: enum
+  ignore_errors: yes
+  become_user: "{{ inventory_commander_types__types_owner }}"
