@@ -29,20 +29,20 @@
       loop_control:
         loop_var: lang
 
-    - name: Create function
-      postgresql_query:
-        db: "{{ inventory_commander_define_functions__database_name }}"
-        query: >
-          CREATE OR REPLACE FUNCTION {{ function.name }}({{ function.args }})
-          RETURNS {{ function.returns }} AS
-          $$
-          {{ function.body }}
-          $$
-          LANGUAGE {{ function.language }} {{ function.volatility }}
-      loop: "{{ inventory_commander_define_functions__functions }}"
-      loop_control:
-        loop_var: function
-
   become_user: postgres
 
-
+- name: Create function
+  postgresql_query:
+    db: "{{ inventory_commander_define_functions__database_name }}"
+    login_user: "{{ inventory_commander_define_functions__functions_owner }}"
+    query: >
+      CREATE OR REPLACE FUNCTION {{ function.name }}({{ function.args }})
+      RETURNS {{ function.returns }} AS
+      $$
+      {{ function.body }}
+      $$
+      LANGUAGE {{ function.language }} {{ function.volatility }}
+  loop: "{{ inventory_commander_define_functions__functions }}"
+  loop_control:
+    loop_var: function
+  become_user: "{{ inventory_commander_define_functions__functions_owner }}"

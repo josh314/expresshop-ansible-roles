@@ -1,1 +1,2 @@
 inventory_commander_define_functions__database_name: ehdb
+inventory_commander_define_functions__functions_owner: postgres
