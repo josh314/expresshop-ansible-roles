@@ -47,25 +47,6 @@
         privs: ALL
         grant_option: yes
 
-    - name: Create enumerated types
-      postgresql_query:
-        db: "{{ inventory_commander_init_postgresql__database_name }}"
-        query: "CREATE TYPE {{ enum.name }} AS ENUM ({{ enum['values'] | map('regex_replace', '(.+)', \"'\\1'\") | join(', ') }})"
-      with_items: "{{ inventory_commander_init_postgresql__enums }}"
-      loop_control:
-        loop_var: enum
-      ignore_errors: yes
-
-    - name: Create public schema tables in `{{ inventory_commander_init_postgresql__database_name }}`
-      postgresql_table:
-        db: "{{ inventory_commander_init_postgresql__database_name }}"
-        owner: "{{ inventory_commander_init_postgresql__database_admin }}"
-        table: "{{ table.name }}"
-        columns: "{{ table.columns }}"
-      with_items: "{{ inventory_commander_init_postgresql__tables }}"
-      loop_control:
-        loop_var: table
-
     - name: Set PostgreSQL host-based authentication entries
       postgresql_pg_hba:
         contype: "{{ user.contype }}"

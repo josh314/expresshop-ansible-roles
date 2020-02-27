@@ -9,3 +9,22 @@ inventory_commander_types__enums:
       - salvage
       - damaged
       - as is
+
+  - name: currency_enum
+    values:
+      - usd
+      - cad
+      - eur
+
+  - name: weight_units_enum
+    values:
+      - lb
+      - oz
+      - kg
+      - g
+
+  - name: linear_units_enum
+    values:
+      - ft
+      - in
+      - cm

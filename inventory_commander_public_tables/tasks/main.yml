@@ -1,0 +1,10 @@
+- name: Create public schema tables in `{{ inventory_commander_public_tables__database_name }}`
+  postgresql_table:
+    db: "{{ inventory_commander_public_tables__database_name }}"
+    owner: "{{ inventory_commander_public_tables__database_admin }}"
+    table: "{{ table.name }}"
+    columns: "{{ table.columns }}"
+  with_items: "{{ inventory_commander_public_tables__tables }}"
+  loop_control:
+    loop_var: table
+  become_user: postgres
