@@ -28,3 +28,9 @@ inventory_commander_types__enums:
       - ft
       - in
       - cm
+
+  - name: package_type_enum
+    values:
+      - box
+      - pallet
+      - truckload

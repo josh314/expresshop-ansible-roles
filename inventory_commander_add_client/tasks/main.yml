@@ -6,7 +6,7 @@
       postgresql_query:
         db: "{{ inventory_commander_add_client__database_name }}"
         query: >
-          INSERT INTO app_client (name, admin_group)
+          INSERT INTO app_client_account (name, admin_group)
           VALUES ('{{ inventory_commander_add_client__client_name }}', '{{ inventory_commander_add_client__client_admin_group }}')
           ON CONFLICT DO NOTHING
 
