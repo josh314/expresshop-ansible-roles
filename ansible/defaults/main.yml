@@ -1,0 +1,6 @@
+ansible_roles_repo: git@gitlab.com:wazue/expresshop-ansible-roles.git
+ansible_roles_repo_version: master
+
+ansible_roles_directory: "/home/{{ ansible_user }}/.ansible/roles"
+
+install_expresshop_roles: yes
