@@ -1,5 +1,8 @@
 - name: copy deploy key
-  copy: src={{ local_deploy_key_file }} dest={{ remote_deploy_key_file }} mode=0600
+  copy:
+    src: "{{ local_deploy_key_file }}"
+    dest: "{{ remote_deploy_key_file }}"
+    mode: "0600"
 
 - name: install lot-commander repo
   git: 
@@ -42,15 +45,12 @@
     path: "{{ project_path }}/node_modules"
 
 - name: remove deploy key
-  file: path={{ remote_deploy_key_file }} state=absent
+  file:
+    path: "{{ remote_deploy_key_file }}"
+    state: absent
 
 # build commands
 - name: build command
-  command: npm run build-client chdir={{ project_path }}
-
-- name: stop app
-  command: pm2 stop process.json chdir={{ project_path }}
-  ignore_errors: yes
-
-- name: start app
-  command: pm2 start process.json chdir={{ project_path }}
+  command: npm run build-client
+  args:
+    chdir: "{{ project_path }}"
