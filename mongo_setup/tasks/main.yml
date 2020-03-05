@@ -5,7 +5,8 @@
 ##########################################################################
 
 
-- import_role:
+- name: add_mongo_repo
+  import_role:
     name: add_mongo_repo
 
 - name: install mongodb
@@ -142,7 +143,8 @@
 #
 ##########################################################################
 
-- import_role:
+- name: mongo_s3_restore
+  import_role:
     name: mongo_s3_restore
   vars:
     mongo_s3_restore_db_user: "{{ mongodb_restore_user }}"
@@ -163,30 +165,11 @@
 
 - name: Setup the database backup cron
   block:
-    - name: Install pip
-      apt:
-        name: python3-pip
-        update-cache: yes
-      become: yes
-
-    - name: Install ansible
-      pip:
-        name:
-          - ansible
-
-    - name: ensure roles directory
-      file:
-        path: "{{ ansible_roles_directory }}"
-        mode: 0700
-        owner: "{{ ansible_user }}"
-        state: directory
-
-    - name: copy the backup role
-      copy:
-        src: "{{ ansible_mongo_s3_backup_role_location }}"
-        dest:  "{{ ansible_roles_directory }}"
-        mode: 0700
-        owner: "{{ ansible_user }}"
+    - name: Install ansible and Expresshop roles
+      import_role:
+        name: ansible
+      vars:
+        install_expresshop_roles: yes
 
     - name: ensure cron working directory
       file:
@@ -214,6 +197,4 @@
   vars:
     ansible_user_home: /home/{{ ansible_user }}
     mongo_s3_backup_cron_working_dir: "{{ ansible_user_home }}/cron/mongo_s3_backup"
-    ansible_roles_directory: "{{ ansible_user_home }}/.ansible/roles"
-    ansible_mongo_s3_backup_role_location: /Users/josh/dev/deploy/lot-commander/ansible/roles/mongo_s3_backup
   when: mongo_s3_backup_s3_bucket is defined
