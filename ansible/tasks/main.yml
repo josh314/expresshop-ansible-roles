@@ -27,7 +27,8 @@
     file:
       path: "{{ ansible_roles_directory }}"
       mode: 0700
-      owner: "{{ ansible_user }}"
+      # owner: "{{ ansible_user }}"
+      # group: "{{ ansible_user }}"
       state: directory
 
   # - name: Configure remote as a deploy client of Gitlab
@@ -36,9 +37,11 @@
 
   - name: Copy deploy key
     copy:
-      src: "{{ local_deploy_key_file }}"
+      src: expresshop-ansible-roles-deploy-key
       dest: "{{ remote_deploy_key_file }}"
       mode: "0600"
+      # owner: "{{ ansible_user }}"
+      # group: "{{ ansible_user }}"
 
   - name: install ansible role(s)
     git: 
@@ -47,5 +50,6 @@
       dest: "{{ ansible_roles_directory }}"
       accept_hostkey: yes
       force: yes
-
+    
+  become_user: "{{ ansible_user }}"
   when: install_expresshop_roles
