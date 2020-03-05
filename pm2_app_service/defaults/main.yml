@@ -1,0 +1,2 @@
+pm2_app_service__pm2_user: "{{ ansible_user }}"
+pm2_app_service__process_file: process.json

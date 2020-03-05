@@ -1,0 +1,29 @@
+
+- name: ensure pm2 is installed
+  become: yes
+  npm:
+    name: pm2
+    global: yes
+    production: yes
+
+- name: Setup pm2 startup script
+  command: env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u {{ pm2_app_service__pm2_user }} --hp /home/{{ pm2_app_service__pm2_user }}
+  become: yes
+
+- name: Stop app if already running. Ignore error caused by app not running yet 
+  command: pm2 stop {{ pm2_app_service__process_file }}
+  args:
+    chdir: "{{ pm2_app_service__path }}"
+  ignore_errors: yes
+
+- name: start app
+  command: pm2 start {{ pm2_app_service__process_file }}
+  args:
+    chdir: "{{ pm2_app_service__path }}"
+
+- name: update pm2 startup process list
+  command: pm2 save
+
+# - name: save pm2 startup process list
+#   command: env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u {{ ansible_user }} --hp /home/{{ ansible_user }}
+#   become: yes
