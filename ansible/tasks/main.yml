@@ -1,22 +1,30 @@
 
-- name: Add ansible PPA and install
+- name: Install Ansible and configure
   block:
 
-  - name: Update APT cache & install PPA-management package
-    apt:
-      name: software-properties-common
-      update-cache: yes
-
-  - name: Add Ansible PPA repository
-    apt_repository:
-      repo: ppa:ansible/ansible
-      state: present
-
-  - name: Update APT cache & install Ansible
+  - name: Install Pip & Python dev tools
     apt:
       update-cache: yes
+      pkg:
+        - python3-pip
+        - python3-dev
+
+  - name: Install Ansible with Pip
+    pip:
       name: ansible
 
+  # - name: ensure ansible directory exists
+  #   file:
+  #     path: /etc/ansible
+  #     mode: 0600
+  #     state: directory
+
+  # - name: Install ansible config file
+  #   copy:
+  #     src: ansible.cfg
+  #     dest: /etc/ansible/ansible.cfg
+  #     mode: "0600"
+      
   become: yes
   
 
