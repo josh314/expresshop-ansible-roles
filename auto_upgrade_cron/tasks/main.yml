@@ -11,7 +11,7 @@
     cron:
       name: auto_upgrade_cron
       state: present
-      job: "/usr/local/sbin/upgrade-packages-and-reboot.sh"
+      job: "/usr/local/sbin/upgrade-packages-and-reboot.sh 1>> /home/{{ ansible_user }}/{{ auto_upgrade_cron_log_prefix }}.log 2>> /home/{{ ansible_user }}/{{ auto_upgrade_cron_log_prefix }}.err"
       month: "{{ auto_upgrade_cron_month }}"
       day: "{{ auto_upgrade_cron_day }}"
       weekday: "{{ auto_upgrade_cron_weekday }}"

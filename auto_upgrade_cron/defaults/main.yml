@@ -6,3 +6,6 @@ auto_upgrade_cron_day: '*'
 auto_upgrade_cron_weekday: '*'
 auto_upgrade_cron_hour: '0'
 auto_upgrade_cron_minute: '0'
+
+auto_upgrade_cron_log_prefix: auto_upgrade_cron
+
