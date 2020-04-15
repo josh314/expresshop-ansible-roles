@@ -1,0 +1,15 @@
+{
+    "apps": [
+        {
+            "name": "expresshop-manifest-service",
+            "script": "index.js",
+            "log_date_format": "YYYY-MM-DD HH:mm Z",
+            "env": {
+                "NODE_ENV": "{{ expresshop_manifest_service__node_env }}",
+                "APP_PORT": {{ expresshop_manifest_service__application_port }},
+                "AWS_ACCESS_KEY_ID": "{{ expresshop_manifest_service__aws_access_key_id }}",
+                "AWS_SECRET_ACCESS_KEY": "{{ expresshop_manifest_service__aws_secret_access_key }}",
+            }
+        }
+    ]
+}

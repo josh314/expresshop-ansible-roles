@@ -1,0 +1,36 @@
+# - name: copy deploy key
+#   copy:
+#     src: "{{ local_deploy_key_file }}"
+#     dest: "{{ remote_deploy_key_file }}"
+#     mode: "0600"
+
+
+- name: Copy deploy key
+  copy:
+    src: gitlab-repo-deploy-key
+    dest: "{{ expresshop_manifest_service__remote_deploy_key_file }}"
+    mode: "0600"
+
+- name: install application repo
+  git: 
+    repo: git@gitlab.com:wazue/expresshop-manifest-service.git
+    version: "{{ expresshop_manifest_service__application_repository_version }}"
+    dest: "{{ expresshop_manifest_service__project_path }}"
+    accept_hostkey: yes
+    force: yes
+
+- name: install pm2 process file
+  template:
+    src: process.json.j2
+    dest: "{{ expresshop_manifest_service__project_path }}/process.json"
+    lstrip_blocks: yes
+
+- name: install npm dependencies
+  npm:
+    ci: yes
+    path: "{{ expresshop_manifest_service__project_path }}/node_modules"
+
+- name: remove deploy key
+  file:
+    path: "{{ expresshop_manifest_service__remote_deploy_key_file }}"
+    state: absent
