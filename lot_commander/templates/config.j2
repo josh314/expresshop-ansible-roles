@@ -13,7 +13,7 @@ module.exports =
 {% else %}
     skipAuth: false,
 {% endif %}
-    env: 'dev',
+    env: '{{ lot_commander__application_env }}',
     port: {{ application_port }},
     assets: {
         root: publicDir,
