@@ -58,6 +58,7 @@
       dest: "{{ ansible_roles_directory }}"
       accept_hostkey: yes
       force: yes
+      key_file: "{{ remote_deploy_key_file }}"
     
   become_user: "{{ ansible_user }}"
   when: install_expresshop_roles

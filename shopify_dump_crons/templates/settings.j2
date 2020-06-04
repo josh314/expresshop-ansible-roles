@@ -1,0 +1,17 @@
+module.exports = {
+  dumpPath: "{{ shopify_dump_crons__dump_path }}",
+  shopify: {
+    name: "{{ shopify_dump_crons__shopify_store_name }}",
+    apiKey: "{{ shopify_dump_crons__shopify_api_key }}",
+    password: "{{ shopify_dump_crons__shopify_password }}",
+  },
+  mongo: {
+    host: "{{ shopify_dump_crons__mongo_host }}",
+    port: {{ shopify_dump_crons__mongo_port }},
+    dbName: "{{ shopify_dump_crons__mongo_db_name }}",
+    {% if shopify_dump_crons__mongo_user is defined and shopify_dump_crons__mongo_password is defined %}
+    user: "{{ shopify_dump_crons__mongo_user }}",
+    password: "{{ shopify_dump_crons__mongo_password }}",
+    {% endif %}
+  },
+};

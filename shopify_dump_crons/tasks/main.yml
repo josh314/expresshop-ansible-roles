@@ -1,0 +1,77 @@
+
+- name: update apt packages
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: install npm/node and global node packages
+  import_role:
+    name: geerlingguy.nodejs
+  become: yes
+  vars:
+    nodejs_version: "12.x"
+
+- name: copy deploy key
+  copy:
+    src: "{{ shopify_dump_crons__local_deploy_key_file }}"
+    dest: "{{ shopify_dump_crons__remote_deploy_key_file }}"
+    mode: "0600"
+
+- name: install the crons code from git repo
+  git: 
+    repo: "{{ shopify_dump_crons__application_repository }}"
+    version: "{{ shopify_dump_crons__application_repository_version }}"
+    dest: "{{ shopify_dump_crons__project_path }}"
+    accept_hostkey: yes
+    force: yes
+    key_file: "{{ shopify_dump_crons__remote_deploy_key_file }}"
+
+- name: install crons settings file
+  template: 
+    src: settings.j2
+    dest: "{{ shopify_dump_crons__project_path }}/settings.js"
+    lstrip_blocks: yes
+
+- name: install npm dependencies
+  npm:
+    ci: yes
+    path: "{{ shopify_dump_crons__project_path }}/node_modules"
+
+- name: create log and dump directories
+  file:
+    path: "{{ path }}"
+    owner: "{{ shopify_dump_crons__user }}"
+    group: "{{ shopify_dump_crons__user }}"
+    state: directory
+  with_items:
+    - "{{ shopify_dump_crons__log_path }}"
+    - "{{ shopify_dump_crons__dump_path }}"
+  loop_control:
+    loop_var: path
+
+####################################################
+# Set crons
+# =========
+####################################################
+
+- name: Set the dump cron
+  cron:
+    name: shopify_take_dump_cron
+    state: present
+    job: "node {{ shopify_dump_crons__project_path }}/dump-shopify-data-to-file.js 1>> {{ shopify_dump_crons__log_path }}/dump-shopify-data-to-file.log 2>> {{ shopify_dump_crons__log_path }}/dump-shopify-data-to-file.err"
+    month: "{{ shopify_dump_crons__dump_cron_month }}"
+    day: "{{ shopify_dump_crons__dump_cron_day }}"
+    weekday: "{{ shopify_dump_crons__dump_cron_weekday }}"
+    hour: "{{ shopify_dump_crons__dump_cron_hour }}"
+    minute: "{{ shopify_dump_crons__dump_cron_minute }}"
+
+- name: Set the save cron
+  cron:
+    name: shopify_save_dump_cron
+    state: present
+    job: "node {{ shopify_dump_crons__project_path }}/save-shopify-dumps-to-db.js 1>> {{ shopify_dump_crons__log_path }}/save-shopify-dumps-to-db.log 2>> {{ shopify_dump_crons__log_path }}/save-shopify-dumps-to-db.err"
+    month: "{{ shopify_dump_crons__save_cron_month }}"
+    day: "{{ shopify_dump_crons__save_cron_day }}"
+    weekday: "{{ shopify_dump_crons__save_cron_weekday }}"
+    hour: "{{ shopify_dump_crons__save_cron_hour }}"
+    minute: "{{ shopify_dump_crons__save_cron_minute }}"
