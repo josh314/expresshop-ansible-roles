@@ -6,16 +6,16 @@
 
 - name: install lot-commander repo
   git: 
-    repo: "{{ application_repository }}"
-    version: "{{ application_repository_version }}"
-    dest: "{{ project_path }}"
+    repo: "{{ lot_commander__application_repository }}"
+    version: "{{ lot_commander__application_repository_version }}"
+    dest: "{{ lot_commander__project_path }}"
     accept_hostkey: yes
     force: yes
 
 - name: install application config file
   template: 
     src: config.j2
-    dest: "{{ project_path }}/config.js"
+    dest: "{{ lot_commander__project_path }}/config.js"
     lstrip_blocks: yes
   vars:
     store: "{{ shopify[shopify_store] }}"
@@ -23,7 +23,7 @@
 - name: install pm2 process file
   template:
     src: process.json.j2
-    dest: "{{ project_path }}/process.json"
+    dest: "{{ lot_commander__project_path }}/process.json"
     lstrip_blocks: yes
 
 - name: create .aws directory
@@ -37,12 +37,12 @@
   template: 
     src: aws-credentials.j2
     dest: "{{ aws_credentials_dir }}/credentials"
-    mode: 0644
+    mode: "0644"
 
 - name: install npm dependencies
   npm:
     ci: yes
-    path: "{{ project_path }}/node_modules"
+    path: "{{ lot_commander__project_path }}/node_modules"
 
 # - name: remove deploy key
 #   file:
@@ -53,4 +53,4 @@
 - name: build command
   command: npm run build-client
   args:
-    chdir: "{{ project_path }}"
+    chdir: "{{ lot_commander__project_path }}"

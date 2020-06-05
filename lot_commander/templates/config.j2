@@ -8,13 +8,13 @@ const viewsDir = 'views';
 
 module.exports =
 {
-{% if skip_auth %}
+{% if lot_commander__skip_auth %}
     skipAuth: true,
 {% else %}
     skipAuth: false,
 {% endif %}
     env: '{{ lot_commander__application_env }}',
-    port: {{ application_port }},
+    port: {{ lot_commander__application_port }},
     assets: {
         root: publicDir,
         less: lessDir,

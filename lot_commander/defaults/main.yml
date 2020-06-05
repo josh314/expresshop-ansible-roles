@@ -1,7 +1,7 @@
 ---
-application_repository: git@gitlab.com:josh314/lot-commander.git
-application_repository_version: master
+lot_commander__application_repository: git@gitlab.com:josh314/lot-commander.git
+lot_commander__application_repository_version: master
 aws_credentials_dir: /home/{{ ansible_user }}/.aws
-skip_auth: no
+lot_commander__skip_auth: no
 lot_commander__application_env: production
 shopify_store: wholesale_ninjas
