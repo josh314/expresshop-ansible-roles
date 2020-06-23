@@ -18,15 +18,3 @@ shopify_dump_crons__mongo_port: 27017
 shopify_dump_crons__application_repository: git@gitlab.com:wazue/shopify-data-dump.git
 shopify_dump_crons__application_repository_version: master
 
-# Cron scheduling
-shopify_dump_crons__dump_cron_month: "*"
-shopify_dump_crons__dump_cron_day: "*"
-shopify_dump_crons__dump_cron_weekday: "*"
-shopify_dump_crons__dump_cron_hour: "*"
-shopify_dump_crons__dump_cron_minute: "0"
-
-shopify_dump_crons__save_cron_month: "*"
-shopify_dump_crons__save_cron_day: "*"
-shopify_dump_crons__save_cron_weekday: "*"
-shopify_dump_crons__save_cron_hour: "*"
-shopify_dump_crons__save_cron_minute: "30"

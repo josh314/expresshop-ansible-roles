@@ -54,24 +54,57 @@
 # =========
 ####################################################
 
-- name: Set the dump cron
-  cron:
-    name: shopify_take_dump_cron
-    state: present
-    job: "node {{ shopify_dump_crons__project_path }}/dump-shopify-data-to-file.js 1>> {{ shopify_dump_crons__log_path }}/dump-shopify-data-to-file.log 2>> {{ shopify_dump_crons__log_path }}/dump-shopify-data-to-file.err"
-    month: "{{ shopify_dump_crons__dump_cron_month }}"
-    day: "{{ shopify_dump_crons__dump_cron_day }}"
-    weekday: "{{ shopify_dump_crons__dump_cron_weekday }}"
-    hour: "{{ shopify_dump_crons__dump_cron_hour }}"
-    minute: "{{ shopify_dump_crons__dump_cron_minute }}"
+# - name: Set the main dump cron
+#   cron:
+#     name: shopify_take_dump_cron
+#     state: present
+#     job: "node {{ shopify_dump_crons__project_path }}/dump-shopify-data-to-file.js 1>> {{ shopify_dump_crons__log_path }}/dump-shopify-data-to-file.log 2>> {{ shopify_dump_crons__log_path }}/dump-shopify-data-to-file.err"
+#     month: "{{ shopify_dump_crons__dump_cron_month }}"
+#     day: "{{ shopify_dump_crons__dump_cron_day }}"
+#     weekday: "{{ shopify_dump_crons__dump_cron_weekday }}"
+#     hour: "{{ shopify_dump_crons__dump_cron_hour }}"
+#     minute: "{{ shopify_dump_crons__dump_cron_minute }}"
 
-- name: Set the save cron
+# - name: Set the save cron
+#   cron:
+#     name: shopify_save_dump_cron
+#     state: present
+#     job: "node {{ shopify_dump_crons__project_path }}/save-shopify-dumps-to-db.js 1>> {{ shopify_dump_crons__log_path }}/save-shopify-dumps-to-db.log 2>> {{ shopify_dump_crons__log_path }}/save-shopify-dumps-to-db.err"
+#     month: "{{ shopify_dump_crons__save_cron_month }}"
+#     day: "{{ shopify_dump_crons__save_cron_day }}"
+#     weekday: "{{ shopify_dump_crons__save_cron_weekday }}"
+#     hour: "{{ shopify_dump_crons__save_cron_hour }}"
+#     minute: "{{ shopify_dump_crons__save_cron_minute }}"
+
+- name: Set the crons
   cron:
-    name: shopify_save_dump_cron
+    name: "{{ item.name }}"
     state: present
-    job: "node {{ shopify_dump_crons__project_path }}/save-shopify-dumps-to-db.js 1>> {{ shopify_dump_crons__log_path }}/save-shopify-dumps-to-db.log 2>> {{ shopify_dump_crons__log_path }}/save-shopify-dumps-to-db.err"
-    month: "{{ shopify_dump_crons__save_cron_month }}"
-    day: "{{ shopify_dump_crons__save_cron_day }}"
-    weekday: "{{ shopify_dump_crons__save_cron_weekday }}"
-    hour: "{{ shopify_dump_crons__save_cron_hour }}"
-    minute: "{{ shopify_dump_crons__save_cron_minute }}"
+    job: "node {{ shopify_dump_crons__project_path }}/{{ item.script }}.js 1>> {{ shopify_dump_crons__log_path }}/{{ item.script }}.log 2>> {{ shopify_dump_crons__log_path }}/{{ item.script }}.err"
+    month: "{{ item.month }}"
+    day: "{{ item.day }}"
+    weekday: "{{ item.weekday }}"
+    hour: "{{ item.hour }}"
+    minute: "{{ item.minute }}"
+  with_items:
+    - name: shopify_take_dump_cron
+      script: dump-shopify-data-to-file
+      month: "*"
+      day: "*"
+      weekday: "*"
+      hour: "*"
+      minute: "0"
+    - name: shopify_metafield_dump_cron
+      script: dump-metafields-to-file
+      month: "*"
+      day: "*"
+      weekday: "*"
+      hour: "*"
+      minute: "20"
+    - name: shopify_save_dump_cron
+      script: save-shopify-dumps-to-db
+      month: "*"
+      day: "*"
+      weekday: "*"
+      hour: "*"
+      minute: "45"
