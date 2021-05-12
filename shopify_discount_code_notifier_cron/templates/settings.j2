@@ -1,0 +1,21 @@
+export const settings = {
+  store: {
+    name: "{{ shopify_discount_code_notifier_cron__shopify_store_name }}",
+    apiKey: "{{ shopify_discount_code_notifier_cron__shopify_api_key }}",
+    password: "{{ shopify_discount_code_notifier_cron__shopify_password }}",
+  },
+  notify: [
+    {
+      name: "Lindey Glenn",
+      greeting: "Lindey",
+      email: "lindeyloutube@gmail.com",
+      codes: [
+        "LINDEY25",
+        "FREESHIPPING21"
+      ]
+    }
+  ],
+  sendgrid: {
+    apiKey: "{{ shopify_discount_code_notifier_cron__sendgrid_api_key }}"
+  }
+};
