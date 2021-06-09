@@ -32,7 +32,7 @@ module.exports =
         }
     },
     dbHosts: {
-        index: {
+        mongo: {
             host: '{{ db_host }}',
             port: '{{ db_port }}',
             auth: {
@@ -41,17 +41,6 @@ module.exports =
             },
             db: 'ehdb',
         },
-    },
-    dbConnMapping: {
-        bstock: 'index',
-        importCache: 'index',
-        inmar: 'index',
-        lots: 'index',
-        manifests: 'index',
-        sessions: 'index',
-        shopifyDump: 'index',
-        'upcitemdb-cache': 'index',
-        users: 'index',
     },
     views: {
         root: viewsDir,

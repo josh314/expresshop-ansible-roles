@@ -14,19 +14,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   ###################################################
 
-  config.vm.define "my_server" do |db_server|
+  config.vm.define "my_server" do |server|
 
     # box
-    db_server.vm.box = "ubuntu/bionic64"
+    server.vm.box = "ubuntu/bionic64"
 
     # SSH configuration
-    db_server.ssh.forward_agent = true
-    db_server.ssh.insert_key = true
+    server.ssh.forward_agent = true
+    server.ssh.insert_key = true
 
-    db_server.vm.network "forwarded_port", guest: 5432, host: 5432
+    server.vm.network "forwarded_port", guest: 5432, host: 5432
 
     # Provisioning
-    db_server.vm.provision "ansible" do |ansible|
+    server.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
 
       # ansible.inventory_path = ANSIBLE_INVENTORY_FILE
@@ -39,7 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         "my_servers" => [ "my_server" ]
       }
 
-    end # db_server.vm.provision
+    end # server.vm.provision
 
   end # config.vm.define
 
