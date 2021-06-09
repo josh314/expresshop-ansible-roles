@@ -1,0 +1,14 @@
+---
+# User and permissions
+shopify_hide_soldout_products_cron__user: "{{ ansible_user }}"
+shopify_hide_soldout_products_cron__local_deploy_key_file: ~/.ssh/aws_deploy_key_ed25519
+shopify_hide_soldout_products_cron__remote_deploy_key_file: /home/{{ ansible_user }}/.ssh/shopify_hide_soldout_products_cron__deploy_key
+
+# Project structure and permissions
+shopify_hide_soldout_products_cron__project_path: "/home/{{ ansible_user }}/shopify-hide-soldout-products"
+shopify_hide_soldout_products_cron__log_path: "{{ shopify_hide_soldout_products_cron__project_path }}/logs"
+
+# Repo defaults
+shopify_hide_soldout_products_cron__application_repository: git@gitlab.com:wazue/shopify-hide-soldout-products.git
+shopify_hide_soldout_products_cron__application_repository_version: master
+
