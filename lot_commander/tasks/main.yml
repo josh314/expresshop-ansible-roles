@@ -15,7 +15,7 @@
 - name: install application config file
   template: 
     src: config.j2
-    dest: "{{ lot_commander__project_path }}/config.js"
+    dest: "{{ lot_commander__project_path }}/server/config.js"
     lstrip_blocks: yes
   vars:
     store: "{{ shopify[shopify_store] }}"
