@@ -1,0 +1,11 @@
+# Sets up a machine to be a client of Gitlab
+- name: Install git
+  apt:
+    pkg: git
+
+- name: Copy deploy key
+  copy:
+    src: "{{ local_deploy_key_file_dir }}/{{ deploy_key_filename }}"
+    dest: "{{ remote_deploy_key_file_dir }}/{{ deploy_key_filename }}"
+    mode: "0600"
+  when: deploy_key_filename exists
