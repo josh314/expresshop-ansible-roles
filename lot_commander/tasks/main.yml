@@ -18,7 +18,8 @@
     dest: "{{ lot_commander__project_path }}/server/config.js"
     lstrip_blocks: yes
   vars:
-    store: "{{ shopify[shopify_store] }}"
+    prod_store: "{{ shopify[shopify_prod_store] }}"
+    staging_store: "{{ shopify[shopify_staging_store] }}"
 
 - name: install pm2 process file
   template:

@@ -4,4 +4,5 @@ lot_commander__application_repository_version: master
 aws_credentials_dir: /home/{{ ansible_user }}/.aws
 lot_commander__skip_auth: no
 lot_commander__application_env: production
-shopify_store: wholesale_ninjas
+shopify_prod_store: wholesale_ninjas
+shopify_staging_store: ninja_staging

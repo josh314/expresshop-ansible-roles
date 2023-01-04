@@ -60,16 +60,26 @@ module.exports =
         },
     },
     shopify: {
-        store: {
-            name: '{{ store.name }}',
-            url: '{{ store.url }}',
+        stores: {
+          prod: {
+            name: '{{ prod_store.name }}',
+            url: '{{ prod_store.url }}',
+            id: '{{ prod_store.id }}',
             auth: {
-                apiKey: '{{ store.auth.api_key }}',
-                password: '{{ store.auth.password }}',
-                exampleUrl: '{{ store.auth.example_url }}',
-                sharedSecret: '{{ store.auth.shared_secret }}',
+                apiKey: '{{ prod_store.auth.api_key }}',
+                accessToken: '{{ prod_store.auth.access_token }}',
             },
-        },
+          },
+          staging: {
+            name: '{{ staging_store.name }}',
+            url: '{{ staging_store.url }}',
+            id: '{{ staging_store.id }}',
+            auth: {
+                apiKey: '{{ staging_store.auth.api_key }}',
+                accessToken: '{{ staging_store.auth.access_token }}',
+            },
+          }
+        }
     },
     shipstation: {
         apiKey: '{{ shipstation.api_key }}',
