@@ -1,0 +1,9 @@
+---
+shopify_data_dump__application_repository: git@gitlab.com:wazue/shopify-data-dump.git
+shopify_data_dump__application_repository_version: production
+shopify_data_dump__application_env: production
+shopify_data_dump__script_args__debug: false
+shopify_data_dump__script_args__poll_results_interval_minutes: 5
+shopify_data_dump__script_args__wait_cycle_interval_minutes: 60
+shopify_data_dump__script_args__order_update_batch_size: 1000
+shopify_store: wholesale_ninjas

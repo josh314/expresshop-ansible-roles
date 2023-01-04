@@ -1,0 +1,21 @@
+import * as path from 'node:path';
+
+export const settings = {
+
+  dumpPath: path.resolve('dump'),
+
+  shopify: {
+    store: '{{ shopify_credentials.store_name }}',
+    apiKey: '{{ shopify_credentials.api_key }}',
+    accessToken: '{{ shopify_credentials.access_token }}',
+  },
+
+  mongo: {
+    host: '{{ db_host }}',
+    port: '{{ db_port }}',
+    username: '{{ db_shopify_data_dump_user }}',
+    password: '{{ db_shopify_data_dump_password }}',
+    dbName: 'ehdb',
+  },
+  
+};

@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "name": "shopify-data-dump",
+      "script": "index.js",
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "args": "{%if shopify_data_dump__script_args__debug %}--debug {% endif %}--pollResultsIntervalMinutes {{ shopify_data_dump__script_args__poll_results_interval_minutes }} --waitCycleIntervalMinutes {{ shopify_data_dump__script_args__wait_cycle_interval_minutes }} --orderUpdateBatchSize {{ shopify_data_dump__script_args__order_update_batch_size }}"
+    }
+  ]
+}
