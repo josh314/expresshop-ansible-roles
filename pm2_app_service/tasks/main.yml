@@ -6,6 +6,20 @@
     global: yes
     production: yes
 
+- name: install log rotation module
+  command: pm2 install pm2-logrotate
+
+# TODO: set the options below by ansible variable
+
+- name: set log file max size
+  command: pm2 set pm2-logrotate:max_size 50M
+
+- name: set num log files to keep
+  command: pm2 set pm2-logrotate:retain 10
+
+- name: set log file compression
+  command: pm2 set pm2-logrotate:compress true
+
 - name: Setup pm2 startup script
   command: env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u {{ pm2_app_service__pm2_user }} --hp /home/{{ pm2_app_service__pm2_user }}
   become: yes
