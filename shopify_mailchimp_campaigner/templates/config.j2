@@ -1,0 +1,39 @@
+module.exports = {
+  logging: {
+    logFilePrefix: 'shopify-mailchimp-campaigner',
+    path: 'logs',
+    level: {
+      console: 'info',
+      file: 'warn'
+    },
+  },
+  mailchimp: {
+    account: {
+      dataCenter: "{{ shopify_mailchimp_campaigner__mailchimp_settings.data_center }}",
+      auth: {
+        user: "{{ shopify_mailchimp_campaigner__mailchimp_settings.user }}",
+        pass: "{{ shopify_mailchimp_campaigner__mailchimp_settings.password }}"
+      },
+    },
+    lists: {
+      test: "{{ shopify_mailchimp_campaigner__mailchimp_settings.lists.test }}",
+      wholesaleNinjas: "{{ shopify_mailchimp_campaigner__mailchimp_settings.lists.wsn }}",
+      internal: "{{ shopify_mailchimp_campaigner__mailchimp_settings.lists.internal }}",
+    },
+    campaignFolders: {
+      api: "{{ shopify_mailchimp_campaigner__mailchimp_settings.campaign_folder }}",
+    },
+    templateFolders: {
+      api: "{{ shopify_mailchimp_campaigner__mailchimp_settings.template_folder }}"
+    }
+  },
+  shopify: {
+    store: {
+      url: "{{ shopify_mailchimp_campaigner__shopify_credentials.store_url }}",
+      auth: {
+        apiKey: "{{ shopify_mailchimp_campaigner__shopify_credentials.api_key }}",
+        password: "{{ shopify_mailchimp_campaigner__shopify_credentials.password }}"
+      },
+    },
+  },
+};

@@ -1,0 +1,33 @@
+- name: copy deploy key
+  copy:
+    src: "{{ shopify_mailchimp_campaigner__local_deploy_key_file }}"
+    dest: "{{ shopify_mailchimp_campaigner__remote_deploy_key_file }}"
+    mode: "0600"
+
+- name: install application code from git repo
+  git: 
+    repo: "{{ shopify_mailchimp_campaigner__application_repository }}"
+    version: "{{ shopify_mailchimp_campaigner__application_repository_version }}"
+    dest: "{{ shopify_mailchimp_campaigner__project_path }}"
+    accept_hostkey: yes
+    force: yes
+    key_file: "{{ shopify_mailchimp_campaigner__remote_deploy_key_file }}"
+
+- name: install configuration file
+  template: 
+    src: config.j2
+    dest: "{{ shopify_mailchimp_campaigner__project_path }}/config.js"
+    lstrip_blocks: yes
+
+- name: install npm dependencies
+  npm:
+    ci: yes
+    path: "{{ shopify_mailchimp_campaigner__project_path }}/node_modules"
+
+- name: create log directory
+  file:
+    path: "{{ shopify_mailchimp_campaigner__project_path }}/logs"
+    owner: "{{ shopify_mailchimp_campaigner__user }}"
+    group: "{{ shopify_mailchimp_campaigner__user }}"
+    state: directory
+

@@ -1,0 +1,14 @@
+---
+# User and permissions
+shopify_mailchimp_campaigner__user: "{{ ansible_user }}"
+shopify_mailchimp_campaigner__local_deploy_key_file: ~/.ssh/aws_deploy_key_ed25519
+shopify_mailchimp_campaigner__remote_deploy_key_file: /home/{{ ansible_user }}/.ssh/shopify_mailchimp_campaigner__deploy_key
+
+# Project structure and permissions
+shopify_mailchimp_campaigner__project_path: "/home/{{ ansible_user }}/shopify-mailchimp-campaigner"
+shopify_mailchimp_campaigner__log_path: "{{ shopify_mailchimp_campaigner__project_path }}/logs"
+
+# Repo defaults
+shopify_mailchimp_campaigner__application_repository: git@gitlab.com:wazue/shopify-mailchimp-campaigner.git
+shopify_mailchimp_campaigner__application_repository_version: master
+
