@@ -1,0 +1,36 @@
+- name: copy deploy key
+  copy:
+    src: "{{ local_deploy_key_file }}"
+    dest: "{{ remote_deploy_key_file }}"
+    mode: "0600"
+
+- name: install application code repo
+  git: 
+    repo: "{{ product_data_cache_updater__application_repository }}"
+    version: "{{ product_data_cache_updater__application_repository_version }}"
+    dest: "{{ product_data_cache_updater__project_path }}"
+    accept_hostkey: yes
+    force: yes
+
+- name: install application settings file
+  template: 
+    src: settings.j2
+    dest: "{{ product_data_cache_updater__project_path }}/settings.js"
+    lstrip_blocks: yes
+
+- name: install pm2 process file
+  template:
+    src: process.json.j2
+    dest: "{{ product_data_cache_updater__project_path }}/process.json"
+    lstrip_blocks: yes
+
+- name: install npm dependencies
+  npm:
+    ci: yes
+    production: yes # doesn't install dev deps
+    path: "{{ product_data_cache_updater__project_path }}/node_modules"
+
+- name: remove deploy key
+  file:
+    path: "{{ remote_deploy_key_file }}"
+    state: absent

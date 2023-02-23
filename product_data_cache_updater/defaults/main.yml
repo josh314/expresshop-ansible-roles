@@ -1,0 +1,4 @@
+---
+shopify_data_dump__application_repository: git@gitlab.com:wazue/product-data-cache-updater.git
+shopify_data_dump__application_repository_version: master
+shopify_data_dump__application_env: production
