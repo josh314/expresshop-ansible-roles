@@ -10,10 +10,8 @@ module.exports = {
   mailchimp: {
     account: {
       dataCenter: "{{ shopify_mailchimp_campaigner__mailchimp_settings.data_center }}",
-      auth: {
-        user: "{{ shopify_mailchimp_campaigner__mailchimp_settings.user }}",
-        pass: "{{ shopify_mailchimp_campaigner__mailchimp_settings.password }}"
-      },
+      user: "{{ shopify_mailchimp_campaigner__mailchimp_settings.user }}",
+      password: "{{ shopify_mailchimp_campaigner__mailchimp_settings.password }}"
     },
     lists: {
       test: "{{ shopify_mailchimp_campaigner__mailchimp_settings.lists.test }}",
