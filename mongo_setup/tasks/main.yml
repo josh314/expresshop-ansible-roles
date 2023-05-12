@@ -11,8 +11,8 @@
 
 - name: install mongodb
   apt:
-    pkg: mongodb-org 
-    state: latest 
+    pkg: mongodb-org
+    state: latest
     update_cache: yes
 
 - name: Install pip
@@ -22,7 +22,7 @@
 - name: Install python packages
   pip:
     name:
-      - pymongo
+      - pymongo==3.12.0
 
 - name: install config file
   template:
@@ -73,7 +73,7 @@
     state: present
   ignore_errors: yes # This is required for idempotence
 
-# The user created in the task above will now be used for further mongo tasks requiring authentication 
+# The user created in the task above will now be used for further mongo tasks requiring authentication
 
 - name: Setup mongo restore user
   mongodb_user:
