@@ -22,7 +22,7 @@
 - name: Install python packages
   pip:
     name:
-      - pymongo==3.12.0
+      - pymongo>=4.0
 
 - name: install config file
   template:
