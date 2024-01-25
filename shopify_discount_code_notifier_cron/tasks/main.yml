@@ -1,16 +1,3 @@
-
-- name: update apt packages
-  apt:
-    update_cache: yes
-  become: yes
-
-- name: install npm/node and global node packages
-  import_role:
-    name: geerlingguy.nodejs
-  become: yes
-  vars:
-    nodejs_version: "14.x"
-
 - name: copy deploy key
   copy:
     src: "{{ shopify_discount_code_notifier_cron__local_deploy_key_file }}"
@@ -18,7 +5,7 @@
     mode: "0600"
 
 - name: install the cron code from git repo
-  git: 
+  git:
     repo: "{{ shopify_discount_code_notifier_cron__application_repository }}"
     version: "{{ shopify_discount_code_notifier_cron__application_repository_version }}"
     dest: "{{ shopify_discount_code_notifier_cron__project_path }}"
@@ -27,7 +14,7 @@
     key_file: "{{ shopify_discount_code_notifier_cron__remote_deploy_key_file }}"
 
 - name: install cron settings file
-  template: 
+  template:
     src: settings.j2
     dest: "{{ shopify_discount_code_notifier_cron__project_path }}/settings.js"
     lstrip_blocks: yes
@@ -49,7 +36,7 @@
 # =========
 ####################################################
 
-- name: Set the main dump cron
+- name: Set the cron
   cron:
     name: shopify_discount_code_notifier_cron
     state: present
