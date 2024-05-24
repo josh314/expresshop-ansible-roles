@@ -12,12 +12,17 @@ export const settings = {
 
   mongo: {
     host: '{{ db_host }}',
+  {% if db_port is defined %}
     port: '{{ db_port }}',
+  {% endif %}
     username: '{{ db_shopify_data_dump_user }}',
     password: '{{ db_shopify_data_dump_password }}',
     dbName: 'ehdb',
+  {% if db_atlas is defined and db_atlas %}
+    atlas: true,
+  {% endif %}
   },
-  
+
   sendgrid: {
     apiKey: '{{ shopify_data_dump__sendgrid_api_key }}'
   },

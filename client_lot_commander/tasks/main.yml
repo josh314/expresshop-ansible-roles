@@ -1,0 +1,56 @@
+- name: copy deploy key
+  copy:
+    src: "{{ local_deploy_key_file }}"
+    dest: "{{ remote_deploy_key_file }}"
+    mode: "0600"
+
+- name: install client-lot-commander repo
+  git:
+    repo: "{{ client_lot_commander__application_repository }}"
+    version: "{{ client_lot_commander__application_repository_version }}"
+    dest: "{{ client_lot_commander__project_path }}"
+    accept_hostkey: yes
+    force: yes
+
+- name: install application config file
+  template:
+    src: config.j2
+    dest: "{{ client_lot_commander__project_path }}/server/config.js"
+    lstrip_blocks: yes
+  vars:
+    store: "{{ shopify[shopify_store] }}"
+
+- name: install pm2 process file
+  template:
+    src: process.json.j2
+    dest: "{{ client_lot_commander__project_path }}/process.json"
+    lstrip_blocks: yes
+
+- name: create .aws directory
+  file:
+    path: "{{ aws_credentials_dir }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: install application AWS credentials
+  template:
+    src: aws-credentials.j2
+    dest: "{{ aws_credentials_dir }}/credentials"
+    mode: "0644"
+
+- name: install npm dependencies
+  npm:
+    ci: yes
+    path: "{{ client_lot_commander__project_path }}/node_modules"
+
+# - name: remove deploy key
+#   file:
+#     path: "{{ remote_deploy_key_file }}"
+#     state: absent
+
+# build commands
+- name: build command
+  command: npm run build-client
+  args:
+    chdir: "{{ client_lot_commander__project_path }}"

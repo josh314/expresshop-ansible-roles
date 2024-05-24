@@ -1,6 +1,6 @@
 {
   "name": "expresshop-ansible-roles",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Ansible roles for Expresshop applications and infrastructure",
   "repository": {
     "type": "git",

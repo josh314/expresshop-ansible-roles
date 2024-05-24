@@ -1,0 +1,7 @@
+---
+client_lot_commander__application_repository: git@gitlab.com:wazue/client-lot-commander.git
+client_lot_commander__application_repository_version: master
+aws_credentials_dir: /home/{{ ansible_user }}/.aws
+client_lot_commander__skip_auth: no
+client_lot_commander__application_env: production
+shopify_store: wholesale_ninjas

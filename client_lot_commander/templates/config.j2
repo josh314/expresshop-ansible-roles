@@ -1,0 +1,57 @@
+const path = require('path');
+
+const publicDir = '../dist';
+const viewsDir = 'views';
+
+module.exports =
+{
+{% if client_lot_commander__skip_auth %}
+    skipAuth: true,
+{% else %}
+    skipAuth: false,
+{% endif %}
+    env: '{{ client_lot_commander__application_env }}',
+    port: {{ client_lot_commander__application_port }},
+    clientHandle: '{{ client_lot_commander__client_handle }}',
+    assets: {
+        root: publicDir,
+    },
+    dbHosts: {
+        mongo: {
+            host: '{{ db_host }}',
+          {% if db_port is defined %}
+            port: '{{ db_port }}',
+          {% endif %}
+            auth: {
+                user: '{{ db_app_user }}',
+                pwd: '{{ db_app_password }}',
+            },
+            db: 'ehdb',
+          {% if db_atlas is defined and db_atlas %}
+            atlas: true,
+          {% endif %}
+        },
+    },
+    views: {
+        root: viewsDir,
+        layouts: path.join(viewsDir, 'layouts'),
+        partials: path.join(viewsDir, 'partials'),
+    },
+    imgPath: '../img',
+    modulesPath: 'modules',
+    shopify: {
+      name: '{{ store.name }}',
+      url: '{{ store.url }}',
+      id: '{{ store.id }}',
+      auth: {
+          apiKey: '{{ store.auth.api_key }}',
+          accessToken: '{{ store.auth.access_token }}',
+      },
+    },
+    upcItemDb: {
+        userKey: '{{ upcitemdb.user_key }}'
+    },
+    services: {
+        manifests: '{{ manifest_service_location }}'
+    }
+};

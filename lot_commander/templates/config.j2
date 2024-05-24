@@ -34,12 +34,17 @@ module.exports =
     dbHosts: {
         mongo: {
             host: '{{ db_host }}',
+          {% if db_port is defined %}
             port: '{{ db_port }}',
+          {% endif %}
             auth: {
                 user: '{{ db_app_user }}',
                 pwd: '{{ db_app_password }}',
             },
             db: 'ehdb',
+          {% if db_atlas is defined and db_atlas %}
+            atlas: true,
+          {% endif %}
         },
     },
     views: {

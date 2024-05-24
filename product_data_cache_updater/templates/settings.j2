@@ -7,16 +7,21 @@ export const settings = {
 
   mongo: {
     host: '{{ db_host }}',
+  {% if db_port is defined %}
     port: '{{ db_port }}',
+  {% endif %}
     user: '{{ db_product_data_cache_updater_user }}',
     password: '{{ db_product_data_cache_updater_password }}',
     db: 'ehdb',
+  {% if db_atlas is defined and db_atlas %}
+    atlas: true,
+  {% endif %}
   },
 
   sendgrid: {
     apiKey: '{{ product_data_cache_updater__sendgrid_api_key }}'
   },
 
-  contactEmail: '{{ product_data_cache_updater__contact_email }}' 
-    
+  contactEmail: '{{ product_data_cache_updater__contact_email }}'
+
 };

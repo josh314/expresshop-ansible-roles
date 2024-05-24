@@ -1,0 +1,15 @@
+{
+    "apps": [
+        {
+            "name": "client-lot-commander",
+            "script": "server/index.js",
+            "log_date_format": "YYYY-MM-DD HH:mm Z",
+            "env": {
+                "SESSION_SECRET": "{{ client_lot_commander__session_secret }}",
+                "AWS_ACCESS_KEY_ID": "{{ client_lot_commander__aws_access_key_id }}",
+                "AWS_SECRET_ACCESS_KEY": "{{ client_lot_commander__aws_secret_access_key }}",
+                "TIMEZONE": "America/New_York"
+            }
+        }
+    ]
+}
