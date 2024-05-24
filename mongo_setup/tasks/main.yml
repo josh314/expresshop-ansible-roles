@@ -190,8 +190,7 @@
       cron:
         name: mongo_s3_backup
         job: su {{ ansible_user }} -c 'ansible-playbook {{ mongo_s3_backup_cron_working_dir }}/mongo_backup_cron_playbook.yml >> {{ mongo_s3_backup_cron_working_dir }}/cronlog 2>> {{ mongo_s3_backup_cron_working_dir }}/cronlog.err'
-        minute: '15'
-        hour: '2'
+        minute: "0"
         state: present
 
   vars:
