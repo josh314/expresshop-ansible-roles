@@ -5,14 +5,14 @@ const viewsDir = 'views';
 
 module.exports =
 {
-{% if client_lot_commander__skip_auth %}
+{% if vendor_lot_commander__skip_auth %}
     skipAuth: true,
 {% else %}
     skipAuth: false,
 {% endif %}
-    env: '{{ client_lot_commander__application_env }}',
-    port: {{ client_lot_commander__application_port }},
-    clientHandle: '{{ client_lot_commander__client_handle }}',
+    env: '{{ vendor_lot_commander__application_env }}',
+    port: {{ vendor_lot_commander__application_port }},
+    vendorHandle: '{{ vendor_lot_commander__vendor_handle }}',
     assets: {
         root: publicDir,
     },
