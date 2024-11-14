@@ -1,4 +1,4 @@
-# Load balancer settings
+# Reverse proxy settings
 # Author: Joshua "El" Davis <josh@wholesaleninjas.com>
 
 
@@ -34,14 +34,23 @@ server {
   root {{ root }};
   index index.html index.htm index.nginx-debian.html;
 
-  location / { 
+  location / {
     proxy_pass http://roundrobin;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'upgrade';
     proxy_set_header Host $host;
     proxy_cache_bypass $http_upgrade;
+
+    proxy_request_buffering off;   # Optional: Reduce memory usage for large uploads
+    proxy_buffering off;           # Optional: Reduce memory usage for large uploads
+
+    # Timeout settings
+    proxy_connect_timeout 600s;
+    proxy_send_timeout 600s;
+    proxy_read_timeout 600s;
+    send_timeout 600s;
   }
 
-  client_max_body_size 100M;
+  client_max_body_size 3G;  # Increase max upload size for videos
 }
