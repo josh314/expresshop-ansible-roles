@@ -1,0 +1,5 @@
+---
+version: 4.0.1
+
+requires:
+  - {name: 'geerlingguy.nodejs', version: '7.0.0'}
