@@ -52,18 +52,8 @@ module.exports =
         layouts: path.join(viewsDir, 'layouts'),
         partials: path.join(viewsDir, 'partials'),
     },
-    productDataSrc: 'upcitemdb',
-    routesPath: '/',
     imgPath: '../img',
-    manifestFilesPath: 'manifests',
     modulesPath: 'modules',
-    logging: {
-        path: 'logs',
-        level: {
-            console: 'info',
-            file: 'warn'
-        },
-    },
     shopify: {
         stores: {
           prod: {
@@ -85,13 +75,6 @@ module.exports =
                 accessToken: '{{ staging_store.auth.access_token }}',
             },
           }
-        }
-    },
-    shipstation: {
-        apiKey: '{{ shipstation.api_key }}',
-        apiSecret: '{{ shipstation.api_secret }}',
-        stores: {
-            bstock: 374389,
         }
     },
     upcItemDb: {
