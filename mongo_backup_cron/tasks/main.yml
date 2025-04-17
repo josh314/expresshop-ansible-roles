@@ -1,0 +1,46 @@
+##########################################################################
+# Backups
+# =======
+#
+##########################################################################
+
+- name: Remove old backup cron if no backup bucket is input
+  cron:
+    name: mongo_s3_backup
+    state: absent
+  when: mongo_s3_backup_s3_bucket is not defined
+
+- name: Setup the database backup cron
+  block:
+    - name: Install ansible and Expresshop roles
+      import_role:
+        name: ansible
+      vars:
+        install_expresshop_roles: yes
+
+    - name: ensure cron working directory
+      file:
+        path: "{{ mongo_s3_backup_cron_working_dir }}"
+        mode: 0700
+        owner: "{{ ansible_user }}"
+        state: directory
+
+    - name: copy the ansible backup playbook
+      template:
+        src: mongo_backup_cron_playbook.j2
+        dest: "{{ mongo_s3_backup_cron_working_dir }}/mongo_backup_cron_playbook.yml"
+        mode: 0700
+        owner: "{{ ansible_user }}"
+        trim_blocks: no
+
+    - name: Register the backup cron
+      cron:
+        name: mongo_s3_backup
+        job: su {{ ansible_user }} -c 'ansible-playbook {{ mongo_s3_backup_cron_working_dir }}/mongo_backup_cron_playbook.yml >> {{ mongo_s3_backup_cron_working_dir }}/cronlog 2>> {{ mongo_s3_backup_cron_working_dir }}/cronlog.err'
+        minute: "0"
+        state: present
+
+  vars:
+    ansible_user_home: /home/{{ ansible_user }}
+    mongo_s3_backup_cron_working_dir: "{{ ansible_user_home }}/cron/mongo_s3_backup"
+  when: mongo_s3_backup_s3_bucket is defined

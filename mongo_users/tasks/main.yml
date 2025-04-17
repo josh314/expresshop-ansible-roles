@@ -1,0 +1,58 @@
+##########################################################################
+# Database users
+# ==============
+#
+##########################################################################
+
+# There is a bit of a chicken-and-the-egg issue with creating the admin user. MongoDB allows you to create one user
+# upon startup from the local machine without authentication (the so-called "localhost exception"). But this fails if
+# attempted again, meaning the present task will have an error if this playbook is run more than once against the same host.
+# The `ignore_errors` option prevents the error from ceasing playbook operation in that case.
+
+- name: Setup mongo admin user
+  mongodb_user:
+    database: admin
+    name: "{{ mongodb_admin_user }}"
+    password: "{{ mongodb_admin_password }}"
+    roles: userAdminAnyDatabase,dbAdminAnyDatabase,readWriteAnyDatabase
+    state: present
+  ignore_errors: yes # This is required for idempotence
+
+# The user created in the task above will now be used for further mongo tasks requiring authentication
+
+- name: Setup mongo restore user
+  mongodb_user:
+    database: admin
+    login_host: localhost
+    login_port: "{{ mongodb_port | string }}"
+    login_user: "{{ mongodb_admin_user }}"
+    login_password: "{{ mongodb_admin_password }}"
+    login_database: admin
+    name: "{{ mongodb_restore_user }}"
+    password: "{{ mongodb_restore_password }}"
+    roles: restore
+
+- name: Setup mongo app user
+  mongodb_user:
+    database: ehdb
+    login_host: localhost
+    login_port: "{{ mongodb_port | string }}"
+    login_user: "{{ mongodb_admin_user }}"
+    login_password: "{{ mongodb_admin_password }}"
+    login_database: admin
+    name: "{{ mongodb_app_user }}"
+    password: "{{ mongodb_app_password }}"
+    roles: readWrite
+
+- name: Setup mongo backup user
+  mongodb_user:
+    database: admin
+    login_host: localhost
+    login_port: "{{ mongodb_port | string }}"
+    login_user: "{{ mongodb_admin_user }}"
+    login_password: "{{ mongodb_admin_password }}"
+    login_database: admin
+    name: "{{ mongodb_backup_user }}"
+    password: "{{ mongodb_backup_password }}"
+    roles: backup
+  when: mongodb_backup_user is defined
