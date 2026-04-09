@@ -36,6 +36,8 @@ module.exports =
             host: '{{ db_host }}',
           {% if db_port is defined %}
             port: '{{ db_port }}',
+          {% else %}
+            port: 27017,
           {% endif %}
             auth: {
                 user: '{{ db_app_user }}',
@@ -82,5 +84,10 @@ module.exports =
     },
     fnskuToAsin: {
         apiKey: '{{ fnsku_to_asin.api_key }}'
+    },
+    traject: {
+      asindataapi: {
+        apiKey: '{{ traject.asindataapi.api_key }}'
+      }
     }
 };

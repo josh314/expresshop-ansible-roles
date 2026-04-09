@@ -27,7 +27,7 @@
     aws_secret_key: "{{ mongo_s3_backup_aws_secret_key }}"
     name: "{{ mongo_s3_backup_s3_bucket }}"
     state: present
-    # policy: 
+    # policy:
 
 - name: save dump tarball to AWS S3
   aws_s3:
@@ -38,6 +38,8 @@
     object: "{{ mongo_s3_backup_tarball_file }}"
     src: "{{ mongo_s3_backup_working_dir }}/{{ mongo_s3_backup_tarball_file }}"
     permission: bucket-owner-full-control
+    headers:
+      StorageClass: GLACIER-IR
 
 - name: remove dump directory
   file:
