@@ -8,8 +8,16 @@
 
 # mongo_s3_backup_db_user:
 # mongo_s3_backup_db_password:
-# mongo_s3_backup_aws_access_key:
-# mongo_s3_backup_aws_secret_key:
+
+####################################################################
+# Optional
+# ========
+#
+####################################################################
+
+# mongo_s3_backup_aws_access_key / mongo_s3_backup_aws_secret_key
+# If undefined, the AWS calls fall back to the default botocore
+# credential chain (e.g. an EC2 instance role).
 
 ####################################################################
 # Defaults

@@ -23,16 +23,16 @@
 
 - name: ensure s3 bucket exists
   s3_bucket:
-    aws_access_key: "{{ mongo_s3_backup_aws_access_key }}"
-    aws_secret_key: "{{ mongo_s3_backup_aws_secret_key }}"
+    aws_access_key: "{{ mongo_s3_backup_aws_access_key | default(omit) }}"
+    aws_secret_key: "{{ mongo_s3_backup_aws_secret_key | default(omit) }}"
     name: "{{ mongo_s3_backup_s3_bucket }}"
     state: present
     # policy:
 
 - name: save dump tarball to AWS S3
   aws_s3:
-    aws_access_key: "{{ mongo_s3_backup_aws_access_key }}"
-    aws_secret_key: "{{ mongo_s3_backup_aws_secret_key }}"
+    aws_access_key: "{{ mongo_s3_backup_aws_access_key | default(omit) }}"
+    aws_secret_key: "{{ mongo_s3_backup_aws_secret_key | default(omit) }}"
     bucket: "{{ mongo_s3_backup_s3_bucket }}"
     mode: put
     object: "{{ mongo_s3_backup_tarball_file }}"

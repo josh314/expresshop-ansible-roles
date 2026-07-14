@@ -36,6 +36,7 @@
           - aws_access_key_id: "{{ mongo_s3_restore_aws_access_key }}"
             aws_secret_access_key: "{{ mongo_s3_restore_aws_secret_key }}"
             region: "{{ mongo_s3_restore_aws_region | default(None) }}"
+      when: mongo_s3_restore_aws_access_key is defined
 
     - name: copy shell script for getting most recent backup from S3
       copy:
@@ -67,8 +68,8 @@
 
 - name: Retrieve S3 object
   aws_s3:
-    aws_access_key: "{{ mongo_s3_restore_aws_access_key }}"
-    aws_secret_key: "{{ mongo_s3_restore_aws_secret_key }}"
+    aws_access_key: "{{ mongo_s3_restore_aws_access_key | default(omit) }}"
+    aws_secret_key: "{{ mongo_s3_restore_aws_secret_key | default(omit) }}"
     bucket: "{{ mongo_s3_restore_s3_bucket }}"
     object: "{{ mongo_s3_restore_s3_object }}"
     dest: "{{ mongo_s3_restore_working_dir }}/{{ mongo_s3_restore_s3_object }}"
