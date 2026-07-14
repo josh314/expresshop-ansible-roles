@@ -1,0 +1,92 @@
+##########################################################################
+# Backups
+# =======
+#
+# Unlike mongo_backup_cron, the cron job here invokes a plain bash script
+# directly instead of re-running ansible-playbook. AWS auth is left
+# implicit: the script never passes credentials to aws-cli, so it picks
+# up whatever the standard aws-cli credential chain finds (a credentials
+# file, or the instance role).
+##########################################################################
+
+- name: Remove backup cron if no backup bucket is input
+  cron:
+    name: mongo_s3_backup_v2
+    state: absent
+  when: mongo_backup_cron_v2_s3_bucket is not defined
+
+- name: Setup the database backup cron
+  block:
+    # The distro `awscli` package (v1) shares system site-packages with any
+    # pip-installed boto3/botocore (e.g. from mongo_s3_restore), and a newer
+    # botocore pulled in that way breaks it (KeyError: 'opsworkscm' and
+    # similar). AWS CLI v2's official installer is self-contained and can't
+    # be broken by that, so we use it instead of the apt package.
+    - name: Remove the apt awscli package if present
+      apt:
+        name: awscli
+        state: absent
+      become: true
+
+    - name: Check if AWS CLI v2 is already installed
+      stat:
+        path: /usr/local/bin/aws
+      register: mongo_backup_cron_v2_aws_cli_binary
+
+    - name: Ensure unzip is installed
+      apt:
+        name: unzip
+        state: present
+        update_cache: true
+      become: true
+      when: not mongo_backup_cron_v2_aws_cli_binary.stat.exists
+
+    - name: Download AWS CLI v2 installer
+      get_url:
+        url: "https://awscli.amazonaws.com/awscli-exe-linux-{{ 'aarch64' if ansible_architecture == 'aarch64' else 'x86_64' }}.zip"
+        dest: /tmp/awscliv2.zip
+      when: not mongo_backup_cron_v2_aws_cli_binary.stat.exists
+
+    - name: Extract AWS CLI v2 installer
+      unarchive:
+        src: /tmp/awscliv2.zip
+        dest: /tmp
+        remote_src: true
+      when: not mongo_backup_cron_v2_aws_cli_binary.stat.exists
+
+    - name: Install AWS CLI v2
+      command: /tmp/aws/install
+      become: true
+      when: not mongo_backup_cron_v2_aws_cli_binary.stat.exists
+
+    - name: Clean up AWS CLI v2 installer artifacts
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/awscliv2.zip
+        - /tmp/aws
+      when: not mongo_backup_cron_v2_aws_cli_binary.stat.exists
+
+    - name: ensure cron working directory
+      file:
+        path: "{{ mongo_backup_cron_v2_working_dir }}"
+        mode: 0700
+        owner: "{{ ansible_user }}"
+        state: directory
+
+    - name: copy the backup script
+      template:
+        src: backup.sh.j2
+        dest: "{{ mongo_backup_cron_v2_working_dir }}/backup.sh"
+        mode: 0700
+        owner: "{{ ansible_user }}"
+
+    - name: Register the backup cron
+      cron:
+        name: mongo_s3_backup_v2
+        job: "su {{ ansible_user }} -c '{{ mongo_backup_cron_v2_working_dir }}/backup.sh >> {{ mongo_backup_cron_v2_working_dir }}/cronlog 2>> {{ mongo_backup_cron_v2_working_dir }}/cronlog.err'"
+        minute: "{{ mongo_backup_cron_v2_minute }}"
+        state: present
+
+  when: mongo_backup_cron_v2_s3_bucket is defined

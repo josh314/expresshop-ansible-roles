@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+
+work_dir="$(mktemp -d "{{ mongo_backup_cron_v2_working_dir }}/run.XXXXXX")"
+trap 'rm -rf "$work_dir"' EXIT
+
+timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
+tarball="${work_dir}/mongodump.${timestamp}.tar.gz"
+
+mongodump \
+  --host={{ mongo_backup_cron_v2_db_host }} \
+  --port={{ mongo_backup_cron_v2_db_port }} \
+  --username={{ mongo_backup_cron_v2_db_user }} \
+  --password={{ mongo_backup_cron_v2_db_password }} \
+  --out="${work_dir}/dump" \
+  --gzip
+
+tar -czf "$tarball" -C "${work_dir}/dump" .
+
+aws s3 cp "$tarball" "s3://{{ mongo_backup_cron_v2_s3_bucket }}/$(basename "$tarball")" \
+  --storage-class {{ mongo_backup_cron_v2_storage_class }} \
+  --acl bucket-owner-full-control \
+{% if mongo_backup_cron_v2_aws_region is defined %}
+  --region {{ mongo_backup_cron_v2_aws_region }} \
+{% endif %}
+  --only-show-errors

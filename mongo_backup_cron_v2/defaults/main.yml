@@ -1,0 +1,32 @@
+####################################################################
+# REQUIRED
+# ========
+#
+####################################################################
+
+# mongo_backup_cron_v2_db_user
+# mongo_backup_cron_v2_db_password
+# mongo_backup_cron_v2_s3_bucket
+
+####################################################################
+# Optional
+# ========
+#
+####################################################################
+
+# AWS region to pass to `aws s3 cp`. If undefined, relies on the aws-cli's
+# own resolution (env var, ~/.aws/config, or instance metadata).
+#
+# mongo_backup_cron_v2_aws_region
+
+####################################################################
+# Defaults
+# ========
+#
+####################################################################
+
+mongo_backup_cron_v2_working_dir: /home/{{ ansible_user }}/cron/mongo_s3_backup
+mongo_backup_cron_v2_db_host: localhost
+mongo_backup_cron_v2_db_port: 27017
+mongo_backup_cron_v2_minute: "0"
+mongo_backup_cron_v2_storage_class: GLACIER_IR
